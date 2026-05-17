@@ -24,17 +24,20 @@ uv run python -c "import yaml; import rapidfuzz; print('ok')"
 uv run forum-etl --help
 ```
 
-В элементах **`posts[].quotes`** в JSON **не попадает** служебная первая строка «`<автор> писал(а):`» (в том числе шаблон **`%username% писал(а):`**); полный контракт — [docs/vision.md](docs/vision.md).
+В элементах **`posts[].quotes`** служебная первая строка «`<автор> писал(а):`» отрезается на этапе разбора (итерация 1); **`posts[].text`** и **`posts[].quotes[]`** нормализуются (**итерация 2**). **`posts[].quotes_out`** — **итерация 3** (RapidFuzz, порог 85); **`posts[].quotes_in`** — **итерация 4** (обратный индекс по `quotes_out`, см. [docs/vision.md](docs/vision.md)).
 
-Этап 5 — **JSON на топик** (UTF-8): `topic_id`, `title`, `posts[]` в порядке `post_index`. По умолчанию файл создаётся как `out/topic_<id>.json` (каталог `out/` создаётся при необходимости).
+**JSON на топик** (UTF-8): `topic_id`, `title`, `posts[]` в порядке `post_index`. По умолчанию файл создаётся как `out/topic_<id>.json` (каталог `out/` создаётся при необходимости).
 
 ```bash
 uv run forum-etl data/topic_2036930.txt
 uv run forum-etl data/topic_2036930.txt out/custom.json
 uv run forum-etl data/topic_2036930.txt out
+# все `topic_*.txt` в каталоге → по одному `topic_<id>.json` в `out/` (или во втором аргументе)
+uv run forum-etl data/
+uv run forum-etl data/ out/
 ```
 
-В stdout — краткая сводка и **абсолютный путь** к записанному JSON. При ошибке разбора YAML/постов — код **1**, отчёт в stderr; ошибка записи — **1** и сообщение в stderr.
+В stdout — краткая сводка и **абсолютный путь** к записанному JSON (в пакетном режиме — по строке на каждый файл). Если первый аргумент — **каталог**, второй должен быть **каталогом вывода**, не отдельным `.json`. При ошибке разбора YAML/постов — код **1**, отчёт в stderr; ошибка записи — **1** и сообщение в stderr.
 
 ## Репозиторий (этап 1)
 
