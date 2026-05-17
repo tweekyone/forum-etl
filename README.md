@@ -18,11 +18,23 @@ uv sync
 uv run python -c "import yaml; import rapidfuzz; print('ok')"
 ```
 
-Заглушка CLI (до этапов 3–5):
+Справка CLI:
 
 ```bash
-uv run forum-etl
+uv run forum-etl --help
 ```
+
+В элементах **`posts[].quotes`** в JSON **не попадает** служебная первая строка «`<автор> писал(а):`» (в том числе шаблон **`%username% писал(а):`**); полный контракт — [docs/vision.md](docs/vision.md).
+
+Этап 5 — **JSON на топик** (UTF-8): `topic_id`, `title`, `posts[]` в порядке `post_index`. По умолчанию файл создаётся как `out/topic_<id>.json` (каталог `out/` создаётся при необходимости).
+
+```bash
+uv run forum-etl data/topic_2036930.txt
+uv run forum-etl data/topic_2036930.txt out/custom.json
+uv run forum-etl data/topic_2036930.txt out
+```
+
+В stdout — краткая сводка и **абсолютный путь** к записанному JSON. При ошибке разбора YAML/постов — код **1**, отчёт в stderr; ошибка записи — **1** и сообщение в stderr.
 
 ## Репозиторий (этап 1)
 
