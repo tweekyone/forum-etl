@@ -1,0 +1,31 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# env / secrets
+.env
+.env.*
+!.env.example
+
+# tooling / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# outputs (ETL artifacts)
+out/
+data/
+
+# uv (optional local cache; uncomment if you store cache inside repo)
+# .uv/
